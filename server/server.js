@@ -14,6 +14,19 @@ app.use(express.static(publicPath));//express static middleware- must be public
 
 io.on('connection', (socket) => {
     console.log('New user connected');
+    
+    socket.emit('newMessage', {//emits a message to every connection
+        from: 'Admin',
+        text: 'Welcome to the chat app',
+        createdAt: new Date().getTime()
+    });
+
+    socket.broadcast.emit('newMessage', {//emits a message to every connection
+        from: 'Admin',
+        text: 'New user joined',
+        createdAt: new Date().getTime()
+    });
+
 
     // socket.emit('newEmail',{
     //     from: 'alan@example.com',
@@ -33,11 +46,19 @@ io.on('connection', (socket) => {
     // }); 
     socket.on('createMessage', (message) => {
         console.log('createMessage', message);
+       
+       
         io.emit('newMessage', {//emits a message to every connection
             from: message.from,
             text: message.text,
             createdAt: new Date().getTime()
         });
+
+        // socket.broadcast.emit('newMessage', {//emits a message to every connection but the one who is sending
+        //         from: message.from,
+        //         text: message.text,
+        //         createdAt: new Date().getTime()
+        //     });
     }); 
     
     socket.on('disconnect', () => {
