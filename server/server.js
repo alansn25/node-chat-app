@@ -37,11 +37,12 @@ io.on('connection', (socket) => {
     // socket.on('createEmail', (newEmail) => {
     //     console.log('createEmail', newEmail);
     // }); 
-    socket.on('createMessage', (message) => {
+    socket.on('createMessage', (message, callback) => {
         console.log('createMessage', message);
        
        
         io.emit('newMessage',generateMessage(message.from, message.text));
+        callback('This is from the server');
 
         // socket.broadcast.emit('newMessage', {//emits a message to every connection but the one who is sending
         //         from: message.from,
