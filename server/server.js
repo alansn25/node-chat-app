@@ -64,8 +64,12 @@ io.on('connection', (socket) => {
     //     console.log('createEmail', newEmail);
     // }); 
     socket.on('createMessage', (message, callback) => {
-        console.log('createMessage', message);
-        io.emit('newMessage',generateMessage(message.from, message.text));
+        var user = users.getUser(socket.id);
+
+        if(user && isRealString(message.text)){
+            io.to(user.room).emit('newMessage',generateMessage(user.name, message.text));
+        }
+        
         callback();
 
         // socket.broadcast.emit('newMessage', {//emits a message to every connection but the one who is sending
@@ -78,7 +82,13 @@ io.on('connection', (socket) => {
     
 
     socket.on('createLocationMessage', (coords) => {
-        io.emit('newLocationMessage',generateLocationMessage('User', coords.latitude, coords.longitude));
+        var user = users.getUser(socket.id);
+
+        if(user){
+            io.to(user.room).emit('newLocationMessage',generateLocationMessage(user.name, coords.latitude, coords.longitude));
+        }
+
+        //io.emit('newLocationMessage',generateLocationMessage('User', coords.latitude, coords.longitude));
         //console.log('Client disconnected from server');
     });
 
